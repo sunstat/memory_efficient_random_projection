@@ -20,12 +20,12 @@ class Merp(object):
         self._rm_gen = trm_gen if tensor else rm_gen
         
         # generate omega
-        self._omega = self._rm_gen(n=n, k=k, typ=rand_type, target=target)
+        self._omega = self._rm_gen(n, k=k, typ=rand_type, target=target)
 
     def regenerate_omega(self):
-        self._omega = self._rm_gen(n=self._n, 
+        self._omega = self._rm_gen(self._n, 
                                    k=self._k, 
-                                   typ=self._rand_type, 
+                                   typ=self._type, 
                                    target=self._target)
     
     def transform(self, X):
