@@ -54,12 +54,6 @@ def simulate(X, num_iters=10, n_neighbors=10, **merpCfg):
     return recall
 
 
-
-
-
-
-
-
 if __name__ == '__main__':
     mat = scipy.io.loadmat('./data/ImageNet_256.mat')
     print(mat.keys())
