@@ -64,7 +64,7 @@ if __name__ == '__main__':
     mat = scipy.io.loadmat('./data/ImageNet_256.mat')
     print(mat.keys())
     X = mat['X']
-    normalized_X = normalization(X)
-    print(normalized_X[:10, :])
+    
+    
 
 
