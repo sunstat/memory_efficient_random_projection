@@ -41,7 +41,7 @@ if __name__ == '__main__':
     print(recall)
     recallF=recall
 
-    rpb = Merp([16,16], 20, rand_type='g', target='col', tensor=True)
+    rpb = Merp([4,64], 20, rand_type='g', target='col', tensor=True)
     X_train, X_test = train_test_split(smallX, test_size=0.05, train_size=0.95, random_state=23)
     true_neigh = nn(n_neighbors=10)
     true_neigh.fit(X_train, False)
@@ -65,8 +65,12 @@ if __name__ == '__main__':
 x = [1,2,3,4,5,6,7,8,9,10]
 y=recallF
 z=recallT
-plt.plot(x,y)
-plt.plot(x,z)
+plt.title('Tensor Test')
+plt.plot(x,y,label='without-tensor')
+plt.plot(x,z,label='with-tensor')
+plt.legend()
+plt.xlabel("random steps")
+plt.ylabel("recall")
 plt.show()
 
 
