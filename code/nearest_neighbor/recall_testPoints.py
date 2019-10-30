@@ -7,23 +7,15 @@ from ..merp import Merp
 from .simulation import normalization, simulate
 import matplotlib.pyplot as plt
 import tensorly as tl
-if __name__ == '__main__':
-    print('hello')
-    mat = scipy.io.loadmat('./data/ImageNet_256.mat')
+
+
+def test_dimension(iter_steps, smallX):
     recallT = []
     recallF = []
     recallTU = []
     recallFU = []
     recallTL = []
     recallFL = []
-    iter_steps = 100
-    # print(mat.keys())
-    X = mat['X']
-    print(X.shape)
-    X = X[1:41, :]
-    smallX = tl.unfold(X, mode=0)
-    smallX = normalization(smallX)
-    print(smallX.shape)
 
     for k in range(10, 30, 2):
         rpb = Merp([16, 16], 20, rand_type='g', target='col', tensor=False)
@@ -78,6 +70,22 @@ if __name__ == '__main__':
         recallTU.append(np.percentile(recalllist, 97.5))
         recallTL.append(np.percentile(recalllist, 2.5))
     print(recallT)
+
+    return[recallF, recallFU, recallFL, recallT, recallTU, recallTL]
+
+
+if __name__ == '__main__':
+    print('hello')
+    mat = scipy.io.loadmat('./data/ImageNet_256.mat')
+    iter_steps = 100
+    # print(mat.keys())
+    X = mat['X']
+    print(X.shape)
+    X = X[1:41, :]
+    smallX = tl.unfold(X, mode=0)
+    smallX = normalization(smallX)
+    print(smallX.shape)
+    test_dimension(iter_steps, smallX)
 
 
 x = range(10, 30, 2)
