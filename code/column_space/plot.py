@@ -1,6 +1,7 @@
 import os
 import matplotlib.pyplot as plt
 import numpy as np
+import pickle
 
 dir_name, _ = os.path.split(os.path.abspath(__file__))
 fig_base = os.path.join(dir_name, 'figures')
@@ -36,6 +37,7 @@ def plot(tensor_dim, res, fig_name):
                 ax.plot(x, relative_err_curves[key]['val'], color=colors[i], label=label, marker=markers[i])
                 ax.plot(x, relative_err_curves[key]['upper_bound'], color=colors[i], linestyle=':', marker=markers[i])
                 ax.plot(x, relative_err_curves[key]['lower_bound'], color=colors[i], linestyle=':', marker=markers[i])
+        ax.legend()
         return fig
 
     res = res[tensor_dim]
@@ -54,3 +56,9 @@ def plot(tensor_dim, res, fig_name):
     fig2 = _plot(relative_err_curves, x, 'lr_tensor')
     fig2.savefig(os.path.join(fig_base, '{}_lrank.png'.format(fig_name)))
     plt.close(fig2)
+
+if __name__ == '__main__':
+    pickle_file = 'tensor_dim_(500, 500).pickle'
+    res = pickle.load(open(os.path.join(dir_name, 'results\{}'.format(pickle_file)), 'rb'))
+    tensor_dim = (500, 500)
+    plot(tensor_dim, res)
