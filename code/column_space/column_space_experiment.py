@@ -4,6 +4,7 @@ import numpy as np
 import tensorly as tl
 import pickle
 import hdmedians as hd
+from .plot import plot
 
 def orthogonal_matrix_gen(dim1, dim2):
     H = np.random.randn(dim1, dim2)
@@ -17,6 +18,7 @@ def average_mat(Xs, method='geomedian'):
         #print(X.shape)
         geomedian = np.array(hd.geomedian(X, axis=0))
         avg = geomedian.reshape(Xs[0].shape)
+        avg = 0
     elif method == 'average':
         avg = np.sum(Xs, axis=0) / len(Xs)
     else:
@@ -61,6 +63,7 @@ def run_exp(tensor, k, mode=1, method='normal', iteration=100, var_reduction='ge
                 # qr decomposition
                 q, _ = np.linalg.qr(reduced_X, mode='reduced')
                 X_hats.append(np.matmul(np.matmul(q, q.T), X))
+                
                 del q
             
             avg_X_hat = average_mat(X_hats, var_reduction)
@@ -91,7 +94,7 @@ def column_space_experiment(tensor_dim=[(500, 500)], k=[5, 10, 15, 20, 25], mode
         res[dim] = dict()
         for reduced_k in k:
             res[dim][reduced_k] = dict()
-            for var_red in [None, 'geomedian', 'average']:
+            for var_red in [None, 'average', 'geomedian']:
                 curr_key = 'raw' if var_red is None else var_red
                 res[dim][reduced_k][curr_key] = dict()
                 # generate tensor
@@ -103,7 +106,7 @@ def column_space_experiment(tensor_dim=[(500, 500)], k=[5, 10, 15, 20, 25], mode
                     res[dim][reduced_k][curr_key][tensor_gen] = dict()
                     for method in ['TRP', 'normal']:
                         tensor = dense_tensor if tensor_gen == 'dense_tensor' else lr_tensor
-                        relative_err = run_exp(tensor=tensor, k=reduced_k, mode=mode, method=method, iteration=iteration)
+                        relative_err = run_exp(tensor=tensor, k=reduced_k, mode=mode, method=method, iteration=iteration, var_reduction=var_red)
                         # store results
                         res[dim][reduced_k][curr_key][tensor_gen][method] = relative_err
                 del dense_tensor
@@ -115,9 +118,10 @@ if __name__ == '__main__':
     
     tl.set_backend('numpy')
     tensor_dim = (500, 500)
-    tensor_dim = (200, 200, 200)
-    res = column_space_experiment(tensor_dim=[tensor_dim], k=[5, 10, 15, 20, 25], mode=1, iteration=1)
-    print(res)
+    #tensor_dim = (200, 200, 200)
+    res = column_space_experiment(tensor_dim=[tensor_dim], k=[5, 10, 15, 20, 25], mode=1, iteration=20)
+    #print(res)
+    plot(tensor_dim, res=res, fig_name='500x500')
     
 
 

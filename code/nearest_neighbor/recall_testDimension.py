@@ -3,7 +3,7 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import NearestNeighbors as nn
 import logging
-from .merp import Merp
+from ..merp import Merp
 from .simulation import normalization, simulate
 import matplotlib.pyplot as plt
 import tensorly as tl
