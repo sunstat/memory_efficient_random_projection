@@ -117,15 +117,15 @@ def column_space_experiment(tensor_dim=[(500, 500)], k=[5, 10, 15, 20, 25], mode
 if __name__ == '__main__':
     
     tl.set_backend('numpy')
-    #tensor_dim = (500, 500)
-    tensor_dim = (200, 200, 200)
+    tensor_dim = (500, 500)
+    #tensor_dim = (200, 200, 200)
     res = column_space_experiment(tensor_dim=[tensor_dim], k=[5, 10, 15, 20, 25], mode=1, iteration=100)
     
     dir_name, _ = os.path.split(os.path.abspath(__file__))
     pickle_base = os.path.join(dir_name, 'results')
     # save pickle
     pickle.dump(res, open(os.path.join(pickle_base, 'tensor_dim_{}.pickle'.format(tensor_dim)), 'wb'))
-    plot(tensor_dim, res=res, fig_name='3D-(200×200×200) Tensor Sketching')
+    plot(tensor_dim, res=res, fig_name='2D-(500×500) Tensor Sketching')
     
 
 

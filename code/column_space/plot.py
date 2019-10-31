@@ -6,8 +6,8 @@ import pickle
 dir_name, _ = os.path.split(os.path.abspath(__file__))
 fig_base = os.path.join(dir_name, 'figures')
 
-markers = ['o', 'v', '*']
-colors = ['r', 'g', 'b']
+markers = ['o', 's', '*']
+colors = ['r', 'y', 'b']
 
 def plot(tensor_dim, res, fig_name):
     '''
@@ -29,18 +29,18 @@ def plot(tensor_dim, res, fig_name):
 
     def _plot(relative_err_curves, x, tensor_type):
         fig, ax = plt.subplots()
-        # plot val
         for i, vr_method in enumerate(['raw', 'geomedian', 'average']):
             for rp_method in ['TRP', 'normal']:
                 label = '{}-{}'.format(rp_method, '' if vr_method == 'raw' else 'vr-{}'.format(vr_method))
                 key = '_'.join([rp_method, vr_method, tensor_type])
-                ax.plot(x, relative_err_curves[key]['val'], color=colors[i], label=label, marker=markers[i])
-                ax.plot(x, relative_err_curves[key]['upper_bound'], color=colors[i], linestyle=':', marker=markers[i])
-                ax.plot(x, relative_err_curves[key]['lower_bound'], color=colors[i], linestyle=':', marker=markers[i])
+                ax.plot(x, relative_err_curves[key]['val'], color=colors[i], label=label, marker=markers[i],linewidth=2.0)
+                ax.plot(x, relative_err_curves[key]['upper_bound'], color=colors[i], linestyle='-.',alpha=0.2,marker=markers[i],linewidth=1.0)
+                ax.plot(x, relative_err_curves[key]['lower_bound'], color=colors[i], linestyle='-.',alpha=0.2, marker=markers[i],linewidth=1.0)
         ax.legend()
         plt.title(fig_name)
         plt.xlabel('Reduced Dimension')
         plt.ylabel('Relative Error')
+        plt.tick_params(axis="both",labelsize=14)
         return fig
 
     res = res[tensor_dim]
@@ -65,4 +65,4 @@ if __name__ == '__main__':
     pickle_file = 'tensor_dim_(500, 500).pickle'
     res = pickle.load(open(os.path.join(dir_name, 'results\{}'.format(pickle_file)), 'rb'))
     tensor_dim = (500, 500)
-    plot(tensor_dim, res,'2D-(500×500) Tensor Sketching')
+    plot(tensor_dim, res,'Testplot')
