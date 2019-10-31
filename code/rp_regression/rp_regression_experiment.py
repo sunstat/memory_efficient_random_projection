@@ -75,4 +75,5 @@ if __name__ == '__main__':
     #     beta_o.append(beta_gen(2, 'g'))
     #     y.append(np.matmul(X[i], beta_o[i]))
     [true_gamma, esti_gamma] = run_exp(X[0], y[0], [2, 2], 1)
-    # gamma_MSE = evaluation(estigamma, true_gamma)
+    # gamma_MSE = evaluation(esti_gamma, true_gamma)
+    # use x/omega/beta=y get esti beta and calculate MSE of beta?
