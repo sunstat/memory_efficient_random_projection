@@ -24,7 +24,7 @@ def plot(tensor_dim, res, fig_name):
             curr_res['val'].append(np.mean(vals))
             curr_res['upper_bound'].append(np.quantile(vals, 0.975))
             curr_res['lower_bound'].append(np.quantile(vals, 0.025))
-        print(curr_res)
+
         return curr_res
 
     def _plot(relative_err_curves, x, tensor_type):
