@@ -4,7 +4,7 @@ from ..merp import Merp
 import numpy as np
 import tensorly as tl
 import pickle
-import hdmedians as hd
+# import hdmedians as hd
 from .plot import plot
 
 def orthogonal_matrix_gen(dim1, dim2):
@@ -13,16 +13,16 @@ def orthogonal_matrix_gen(dim1, dim2):
     #print(Q)
     return Q
 
-def average_mat(Xs, method='geomedian'):
-    if method == 'geomedian':
-        X = np.asarray([Xs[i].reshape(-1,) for i in range(len(Xs))])
+def average_mat(Xs, method='average'):
+    # if method == 'geomedian':
+    #     X = np.asarray([Xs[i].reshape(-1,) for i in range(len(Xs))])
         #print(X.shape)
-        geomedian = np.array(hd.geomedian(X, axis=0))
-        avg = geomedian.reshape(Xs[0].shape)
-    elif method == 'average':
-        avg = np.sum(Xs, axis=0) / len(Xs)
-    else:
-        raise NotImplementedError
+        # geomedian = np.array(hd.geomedian(X, axis=0))
+        # avg = geomedian.reshape(Xs[0].shape)
+    # elif method == 'average':
+    avg = np.sum(Xs, axis=0) / len(Xs)
+    # else:
+    #     raise NotImplementedError
     return avg
 
 def run_exp(tensor, k, mode=1, method='normal', iteration=100, var_reduction='geomedian'):
@@ -117,15 +117,15 @@ def column_space_experiment(tensor_dim=[(500, 500)], k=[5, 10, 15, 20, 25], mode
 if __name__ == '__main__':
     
     tl.set_backend('numpy')
-    tensor_dim = (500, 500)
-    #tensor_dim = (200, 200, 200)
+    #tensor_dim = (500, 500)
+    tensor_dim = (200, 200, 200)
     res = column_space_experiment(tensor_dim=[tensor_dim], k=[5, 10, 15, 20, 25], mode=1, iteration=100)
     
     dir_name, _ = os.path.split(os.path.abspath(__file__))
     pickle_base = os.path.join(dir_name, 'results')
     # save pickle
     pickle.dump(res, open(os.path.join(pickle_base, 'tensor_dim_{}.pickle'.format(tensor_dim)), 'wb'))
-    plot(tensor_dim, res=res, fig_name='500x500')
+    plot(tensor_dim, res=res, fig_name='3D-(200×200×200) Tensor Sketching')
     
 
 

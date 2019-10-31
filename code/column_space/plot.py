@@ -38,6 +38,9 @@ def plot(tensor_dim, res, fig_name):
                 ax.plot(x, relative_err_curves[key]['upper_bound'], color=colors[i], linestyle=':', marker=markers[i])
                 ax.plot(x, relative_err_curves[key]['lower_bound'], color=colors[i], linestyle=':', marker=markers[i])
         ax.legend()
+        plt.title(fig_name)
+        plt.xlabel('Reduced Dimension')
+        plt.ylabel('Relative Error')
         return fig
 
     res = res[tensor_dim]
@@ -58,7 +61,8 @@ def plot(tensor_dim, res, fig_name):
     plt.close(fig2)
 
 if __name__ == '__main__':
+    print('hello')
     pickle_file = 'tensor_dim_(500, 500).pickle'
     res = pickle.load(open(os.path.join(dir_name, 'results\{}'.format(pickle_file)), 'rb'))
     tensor_dim = (500, 500)
-    plot(tensor_dim, res)
+    plot(tensor_dim, res,'2D-(500×500) Tensor Sketching')
