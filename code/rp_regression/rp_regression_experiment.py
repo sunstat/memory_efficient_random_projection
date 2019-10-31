@@ -44,7 +44,19 @@ def run_exp(X, y, tensor_dim, k, mode=0, method='TRP'):
     esti_gamma = np.matmul(rp._omega, solve_linear_regression(reduced_X, y))
 
     #TODO: do evaluation
+def evaluation(beta_hat,beta_true):
+    absError = []
+    squaredError = []
+    error = []
+    for i in range(len(beta_true)):
+        error.append(beta_true[i] - beta_hat[i])
+    for val in error:
+        squaredError.append(val * val)
+    #MSE
+    return sum(squaredError) / len(squaredError)
 
+
+    
 
 
 
