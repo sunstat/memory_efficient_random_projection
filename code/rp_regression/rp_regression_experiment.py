@@ -64,15 +64,15 @@ def evaluation(beta_hat, beta_true):
 
 
 if __name__ == '__main__':
-    X = np.array(design_matrix_gen(3, 2, 1, 'g'))
-    beta_o = np.array([beta_gen(2, 'g')])
+    X = np.array(design_matrix_gen(3, 2, 2, 'g'))
+    beta_o = np.array([beta_gen(1, 'g'), beta_gen(1, 'g')])
     y = np.matmul(X, beta_o)
-    print(X.shape)
+    print(X[1].shape)
     print(beta_o.shape)
     print(y.shape)
     # for i in range(3):
     #     X.append(design_matrix_gen(3, 2, 2, 'g'))
     #     beta_o.append(beta_gen(2, 'g'))
     #     y.append(np.matmul(X[i], beta_o[i]))
-    [true_gamma, esti_gamma] = run_exp(X, y, [2, 1], 2, 0, 'TRP')
+    [true_gamma, esti_gamma] = run_exp(X[0], y[0], [2, 2], 1)
     # gamma_MSE = evaluation(estigamma, true_gamma)
