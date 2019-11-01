@@ -1,1 +1,0 @@
-name = 'tensor_regression'
