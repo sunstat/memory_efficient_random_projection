@@ -1,6 +1,7 @@
 from ..merp import Merp
 import numpy as np
 
+
 '''
 min ||Y - X\Omega\beta||_2
 '''
@@ -64,16 +65,27 @@ def evaluation(beta_hat, beta_true):
 
 
 if __name__ == '__main__':
-    X = np.array(design_matrix_gen(3, 2, 2, 'g'))
-    beta_o = np.array([beta_gen(1, 'g'), beta_gen(1, 'g')])
+    X = np.array(design_matrix_gen(2, 8, 4, 'g'))
+    beta_o = np.array([beta_gen(2, 'g'),beta_gen(2, 'g'),beta_gen(2, 'g'),beta_gen(2, 'g')])
     y = np.matmul(X, beta_o)
-    print(X[1].shape)
-    print(beta_o.shape)
-    print(y.shape)
-    # for i in range(3):
-    #     X.append(design_matrix_gen(3, 2, 2, 'g'))
-    #     beta_o.append(beta_gen(2, 'g'))
-    #     y.append(np.matmul(X[i], beta_o[i]))
-    [true_gamma, esti_gamma] = run_exp(X[0], y[0], [2, 2], 1)
-    # gamma_MSE = evaluation(esti_gamma, true_gamma)
-    # use x/omega/beta=y get esti beta and calculate MSE of beta?
+    print(X.shape)     #X:2*8*4
+    print(beta_o.shape)   #beta_o:4,2
+    print(y.shape)        #y:2*8*2      
+    #[true_gamma, esti_gamma] = run_exp(X, y, [2, 1], 1)
+    #ori_gamma_MSE = evaluation(esti_gamma, true_gamma)
+    rp = Merp([4,4],2, rand_type='g', target='col', tensor=True,fastQR=True)
+    rp.regenerate_omega()
+    print(len(rp._omegas))
+    print(rp._omegas[0].shape)   #4,2
+    print(rp._omegas[1].shape)   #4,2
+    q,r=rp.fastQR(X)    
+    print(q.shape)
+    print(r.shape)
+    # print(np.matmul(np.transpose(q),q))      #(4,2)
+    # print(y.shape)   #(2,2)
+    # for i in range(2):
+    #     y[i]=np.matmul(q,y[i])  #not transpose
+    #y=np.matmul(np.transpose(q),y)
+    # gamma, _, _, _ = np.linalg.lstsq(r, y)
+    #get the estimate and evaluate it?
+    
