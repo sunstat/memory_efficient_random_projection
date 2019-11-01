@@ -25,34 +25,39 @@ def design_matrix_gen(order, n, d, type='g'):
         raise NotImplementedError
     return Ai
 
-
 def beta_gen(d, type='g'):
     if type == 'g':
-        beta = np.random.normal(0.0, 1.0, size=(d,))
+        beta = np.random.normal(0.0, 1.0, size=(d, 1))
     elif type == 'u':
-        beta = np.random.uniform(-1.0, 1.0, size=(d,))
+        beta = np.random.uniform(-1.0, 1.0, size=(d, 1))
     else:
         raise NotImplementedError
     return beta
 
+def y_gen(X, beta, noise_level=0.1):
+    y = X @ beta + np.random.normal(0.0, noise_level, size=(X.shape[0], 1))
+    return y
 
-def run_exp(X, y, tensor_dim, k, mode=0, method='TRP'):
+def run_exp(A, X, y, beta, k, tensor_dim, method='TRP', iteration=100):
     n, m = X.shape
-    assert n == tensor_dim[mode]
-    assert np.prod(tensor_dim) == n * m
     assert method in ['TRP', 'normal']
 
-    del tensor_dim[mode]
+    relative_errs = []
     rp = Merp(n=tensor_dim, k=k, rand_type='g',
-              target='col', tensor=method == 'TRP')
-    reduced_X = rp.transform(X)
+              target='col', tensor=method == 'TRP', fastQR=method == 'TRP')
+    for _ in range(iteration):
+        rp.regenerate_omega()
+        if method == 'TRP':
+            q, r = rp.fastQR(A)
+        else:
+            reduced_X = rp.transform(X)
+            q, r = np.linalg.qr(rp.transform(X))
+        est_beta, _, _, _ = np.linalg.lstsq(r, q.T @ y)
+        err = np.linalg.norm((rp._omega @ est_beta)-beta, ord=2)
+        relative_err = err / np.linalg.norm(beta, ord=2)
+        relative_errs.append(relative_err)
 
-    true_gamma = solve_linear_regression(X, y)
-    esti_gamma = np.matmul(rp._omega, solve_linear_regression(reduced_X, y))
-    return [true_gamma, esti_gamma]
-
-    # TODO: do evaluation
-
+    return relative_errs
 
 def evaluation(beta_hat, beta_true):
     squaredError = []
@@ -64,7 +69,29 @@ def evaluation(beta_hat, beta_true):
     # MSE
     return sum(squaredError) / len(squaredError)
 
+def rp_regression_experiment(A_dim=(20, 30), order=2, k=[5, 10, 15, 20, 25], noise_level=0.1, iteration=100):
+    A = design_matrix_gen(order, A_dim[0], A_dim[1])
+    dim = [A_dim[1] for _ in range(order)]
 
+    # generate beta, y
+    beta = beta_gen(np.prod(dim))
+    X = tl.tenalg.kronecker(A)
+    y = y_gen(X, beta, noise_level=noise_level)
+    res = dict()
+    for reduced_k in k:
+        res[reduced_k] = dict()
+        for method in ['TRP', 'normal']:
+            res[reduced_k][method] = dict()
+            relative_err = run_exp(A, X, y, beta, reduced_k, dim, method=method, iteration=100)
+            res[reduced_k][method]['relative_err'] = relative_err
+    return res
+
+if __name__ == '__main__':
+    A_dim = (5, 10)
+    res = rp_regression_experiment(A_dim=A_dim, order=2, k=[5, 10, 15, 20, 25], noise_level=0.1, iteration=1)
+    #print(res)
+
+'''
 if __name__ == '__main__':
     MulA = np.array(design_matrix_gen(4, 2, 2, 'g'))
     A1 = MulA[0]
@@ -97,3 +124,4 @@ if __name__ == '__main__':
     # y=np.matmul(np.transpose(q),y)
     # gamma, _, _, _ = np.linalg.lstsq(r, y)
     # get the estimate and evaluate it?
+'''

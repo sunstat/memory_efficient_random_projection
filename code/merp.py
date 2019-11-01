@@ -72,14 +72,14 @@ class Merp(object):
     
     def fastQR(self, X):
         '''
-        :X: a 3-D tensor
+        :X: a list 2D matrix, kron(X1, X2, ..., Xn)
         '''
         assert self._fastQR and self._tensor
-        assert X.shape[0] == len(self._omegas)
+        assert len(X) == len(self._omegas)
         # qr decompose of Xi\Omega_i
         qs = []
         rs = []
-        for i in range(X.shape[0]):
+        for i in range(len(X)):
             q, r = np.linalg.qr(np.matmul(X[i], self._omegas[i]))
             qs.append(q)
             rs.append(r)
