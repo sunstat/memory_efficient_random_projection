@@ -71,16 +71,16 @@ if __name__ == '__main__':
     print(X.shape)     #X:2*8*4
     print(beta_o.shape)   #beta_o:4,2
     print(y.shape)        #y:2*8*2      
-    #[true_gamma, esti_gamma] = run_exp(X, y, [2, 1], 1)
+    #[true_gamma, esti_gamma] = run_exp(X, y, [4, 4], 2)
     #ori_gamma_MSE = evaluation(esti_gamma, true_gamma)
     rp = Merp([4,4],2, rand_type='g', target='col', tensor=True,fastQR=True)
     rp.regenerate_omega()
     print(len(rp._omegas))
     print(rp._omegas[0].shape)   #4,2
     print(rp._omegas[1].shape)   #4,2
-    q,r=rp.fastQR(X)    
-    print(q.shape)
-    print(r.shape)
+    # q,r=rp.fastQR(X)    
+    # print(q.shape)
+    # print(r.shape)
     # print(np.matmul(np.transpose(q),q))      #(4,2)
     # print(y.shape)   #(2,2)
     # for i in range(2):
