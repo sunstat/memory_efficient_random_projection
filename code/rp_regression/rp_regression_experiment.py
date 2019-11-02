@@ -43,6 +43,7 @@ def run_exp(A, X, y, beta, k, tensor_dim, method='TRP', iteration=100):
     assert method in ['TRP', 'normal']
 
     relative_errs = []
+    residuals = []
     rp = Merp(n=tensor_dim, k=k, rand_type='g',
               target='col', tensor=method == 'TRP', fastQR=method == 'TRP')
     for _ in range(iteration):
@@ -52,12 +53,13 @@ def run_exp(A, X, y, beta, k, tensor_dim, method='TRP', iteration=100):
         else:
             reduced_X = rp.transform(X)
             q, r = np.linalg.qr(rp.transform(X))
-        est_beta, _, _, _ = np.linalg.lstsq(r, q.T @ y)
+        est_beta, residual, _, _ = np.linalg.lstsq(r, q.T @ y)
         err = np.linalg.norm((rp._omega @ est_beta)-beta, ord=2)
         relative_err = err / np.linalg.norm(beta, ord=2)
         relative_errs.append(relative_err)
+        residuals.append(residual)
 
-    return relative_errs
+    return relative_errs, residuals
 
 def evaluation(beta_hat, beta_true):
     squaredError = []
@@ -82,8 +84,9 @@ def rp_regression_experiment(A_dim=(20, 30), order=2, k=[5, 10, 15, 20, 25], noi
         res[reduced_k] = dict()
         for method in ['TRP', 'normal']:
             res[reduced_k][method] = dict()
-            relative_err = run_exp(A, X, y, beta, reduced_k, dim, method=method, iteration=100)
+            relative_err, residual = run_exp(A, X, y, beta, reduced_k, dim, method=method, iteration=100)
             res[reduced_k][method]['relative_err'] = relative_err
+            res[reduced_k][method]['residual'] = residual
     return res
 
 if __name__ == '__main__':
