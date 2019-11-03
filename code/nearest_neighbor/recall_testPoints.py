@@ -18,7 +18,7 @@ def test_dimension(iter_steps, smallX):
     recallFL = []
 
     for k in range(10, 30, 2):
-        rpb = Merp([16, 16], 20, rand_type='g', target='col', tensor=False)
+        rpb = Merp([64, 256], 20, rand_type='g', target='col', tensor=False)
         X_train, X_test = train_test_split(
             smallX, test_size=0.05, train_size=0.95, random_state=23)
         true_neigh = nn(n_neighbors=k)
@@ -45,7 +45,7 @@ def test_dimension(iter_steps, smallX):
     print(recallF)
 
     for k in range(10, 30, 2):
-        rpb = Merp([16, 16], 20, rand_type='g', target='col', tensor=True)
+        rpb = Merp([64, 256], 20, rand_type='g', target='col', tensor=True)
         X_train, X_test = train_test_split(
             smallX, test_size=0.05, train_size=0.95, random_state=23)
         true_neigh = nn(n_neighbors=k)
@@ -76,7 +76,7 @@ def test_dimension(iter_steps, smallX):
 
 if __name__ == '__main__':
     print('hello')
-    mat = scipy.io.loadmat('./data/ImageNet_256.mat')
+    mat = scipy.io.loadmat('./data/Flickr_16384.mat')
     iter_steps = 100
     # print(mat.keys())
     X = mat['X']
@@ -85,7 +85,8 @@ if __name__ == '__main__':
     smallX = tl.unfold(X, mode=0)
     smallX = normalization(smallX)
     print(smallX.shape)
-    test_dimension(iter_steps, smallX)
+    [recallF, recallFU, recallFL, recallT, recallTU,
+        recallTL] = test_dimension(iter_steps, smallX)
 
 
 x = range(10, 30, 2)
@@ -95,7 +96,7 @@ yu = recallFU
 yl = recallFL
 zu = recallTU
 zl = recallTL
-plt.title('Tensor Test')
+plt.title('Flickr_16384:Points')
 plt.plot(x, y, color='r', label='without-tensor', marker='o')
 plt.plot(x, yu, color='r', label='without-tensor', linestyle=':', marker='o')
 plt.plot(x, yl, color='r', label='without-tensor', linestyle=':', marker='o')
