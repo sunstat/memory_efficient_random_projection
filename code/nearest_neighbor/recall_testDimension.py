@@ -17,7 +17,7 @@ def test_dimension(iter_steps, smallX):
     recallTL = []
     recallFL = []
     for k in range(10, 65, 5):
-        rpb = Merp([16, 16], k, rand_type='g', target='col', tensor=False)
+        rpb = Merp([64, 256], k, rand_type='g', target='col', tensor=False)
         X_train, X_test = train_test_split(
             smallX, test_size=0.05, train_size=0.95, random_state=23)
         true_neigh = nn(n_neighbors=10)
@@ -32,7 +32,6 @@ def test_dimension(iter_steps, smallX):
             rp_neigh = nn(n_neighbors=10)
             rp_neigh.fit(X_train_rp)
             # query and calculate recall rate
-            print(X_test.shape)
             true_neighbors = true_neigh.kneighbors(X_test)
             pred_neighbors = rp_neigh.kneighbors(X_test_rp)
             # print('hello')
@@ -46,11 +45,9 @@ def test_dimension(iter_steps, smallX):
         recallF.append(recall/iter_steps)
         recallFU.append(np.percentile(recalllist, 97.5))
         recallFL.append(np.percentile(recalllist, 2.5))
-    print('utada')
-    print(recallF)
 
     for k in range(10, 65, 5):
-        rpb = Merp([16, 16], k, rand_type='g', target='col', tensor=True)
+        rpb = Merp([64, 256], k, rand_type='g', target='col', tensor=True)
         X_train, X_test = train_test_split(
             smallX, test_size=0.05, train_size=0.95, random_state=23)
         true_neigh = nn(n_neighbors=10)
@@ -78,14 +75,11 @@ def test_dimension(iter_steps, smallX):
         recallT.append(recall/iter_steps)
         recallTU.append(np.percentile(recalllist, 97.5))
         recallTL.append(np.percentile(recalllist, 2.5))
-    print('shiina')
-    print(recallT)
-    print(recallF)
     return[recallF, recallFU, recallFL, recallT, recallTU, recallTL]
 
 
 if __name__ == '__main__':
-    mat = scipy.io.loadmat('./data/ImageNet_256.mat')
+    mat = scipy.io.loadmat('./data/Flickr_16384.mat')
     X = mat['X']
     print(X.shape)
     X = X[1:41, :]
@@ -105,7 +99,7 @@ yu = recallFU
 yl = recallFL
 zu = recallTU
 zl = recallTL
-plt.title('Tensor Test')
+plt.title('Flickr-16384:Dimension')
 plt.plot(x, y, color='r', label='without-tensor', marker='o')
 plt.plot(x, yu, color='r', label='without-tensor', linestyle=':', marker='o')
 plt.plot(x, yl, color='r', label='without-tensor', linestyle=':', marker='o')
