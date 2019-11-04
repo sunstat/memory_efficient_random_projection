@@ -9,18 +9,18 @@ import matplotlib.pyplot as plt
 import tensorly as tl
 
 
-def test_dimension(iter_steps, smallX):
+def test_dimension(iter_steps, smallX,targetNeighbors):
     recallT = []
     recallF = []
     recallTU = []
     recallFU = []
     recallTL = []
     recallFL = []
-    for k in range(10, 65, 5):
+    for k in range(200,205, 5):
         rpb = Merp([64, 256], k, rand_type='g', target='col', tensor=False)
         X_train, X_test = train_test_split(
             smallX, test_size=0.05, train_size=0.95, random_state=23)
-        true_neigh = nn(n_neighbors=10)
+        true_neigh = nn(n_neighbors=targetNeighbors)
         true_neigh.fit(X_train, False)
         recall = 0
         recalllist = []
@@ -29,28 +29,25 @@ def test_dimension(iter_steps, smallX):
             X_train_rp = rpb.transform(X_train)
             X_test_rp = rpb.transform(X_test)
             # generate predictions
-            rp_neigh = nn(n_neighbors=10)
+            rp_neigh = nn(n_neighbors=targetNeighbors)
             rp_neigh.fit(X_train_rp)
             # query and calculate recall rate
-            true_neighbors = true_neigh.kneighbors(X_test)
-            pred_neighbors = rp_neigh.kneighbors(X_test_rp)
-            # print('hello')
-            # print(len(true_neighbors))
-            # print(len(pred_neighbors))
-            # print(X_test.shape[0])
+            true_distances,true_indices = true_neigh.kneighbors(X_test,targetNeighbors)
+            pred_distances,pred_indices = rp_neigh.kneighbors(X_test_rp,targetNeighbors)
+            
             curr_recall = np.asarray([np.intersect1d(
-                true_neighbors[u], pred_neighbors[u]).size for u in range(X_test.shape[0])]) / 10
+                true_indices[u], pred_indices[u]).size for u in range(X_test.shape[0])]) / targetNeighbors
             recall = recall+curr_recall.mean()
             recalllist.append(curr_recall.mean())
         recallF.append(recall/iter_steps)
         recallFU.append(np.percentile(recalllist, 97.5))
         recallFL.append(np.percentile(recalllist, 2.5))
 
-    for k in range(10, 65, 5):
+    for k in range(200, 205, 5):
         rpb = Merp([64, 256], k, rand_type='g', target='col', tensor=True)
         X_train, X_test = train_test_split(
             smallX, test_size=0.05, train_size=0.95, random_state=23)
-        true_neigh = nn(n_neighbors=10)
+        true_neigh = nn(n_neighbors=targetNeighbors)
         true_neigh.fit(X_train, False)
         recall = 0
         recalllist = []
@@ -59,17 +56,17 @@ def test_dimension(iter_steps, smallX):
             X_train_rp = rpb.transform(X_train)
             X_test_rp = rpb.transform(X_test)
             # generate predictions
-            rp_neigh = nn(n_neighbors=10)
+            rp_neigh = nn(n_neighbors=targetNeighbors)
             rp_neigh.fit(X_train_rp)
             # query and calculate recall rate
-            true_neighbors = true_neigh.kneighbors(X_test)
-            pred_neighbors = rp_neigh.kneighbors(X_test_rp)
+            true_distances,true_indices = true_neigh.kneighbors(X_test,targetNeighbors)
+            pred_distances,pred_indices = rp_neigh.kneighbors(X_test_rp,targetNeighbors)
             # print('hello')
             # print(len(true_neighbors))
             # print(len(pred_neighbors))
             # print(len(X_test.shape))
             curr_recall = np.asarray([np.intersect1d(
-                true_neighbors[u], pred_neighbors[u]).size for u in range(X_test.shape[0])]) / 10
+                true_indices[u], pred_indices[u]).size for u in range(X_test.shape[0])]) / targetNeighbors
             recall = recall+curr_recall.mean()
             recalllist.append(curr_recall.mean())
         recallT.append(recall/iter_steps)
@@ -82,17 +79,17 @@ if __name__ == '__main__':
     mat = scipy.io.loadmat('./data/Flickr_16384.mat')
     X = mat['X']
     print(X.shape)
-    X = X[1:41, :]
+    X = X[1:3000, :]
     smallX = tl.unfold(X, mode=0)
     smallX = normalization(smallX)
     print(smallX.shape)
-    iter_steps = 100
+    iter_steps = 30
 
     [recallF, recallFU, recallFL, recallT, recallTU,
-        recallTL] = test_dimension(iter_steps, smallX)
+        recallTL] = test_dimension(iter_steps, smallX,80)
 
 
-x = [10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60]
+x = [100]
 y = recallF
 z = recallT
 yu = recallFU

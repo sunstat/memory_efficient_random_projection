@@ -33,8 +33,8 @@ def test_dimension(iter_steps, smallX):
             rp_neigh = nn(n_neighbors=k)
             rp_neigh.fit(X_train_rp)
             # query and calculate recall rate
-            true_neighbors = true_neigh.kneighbors(X_test)
-            pred_neighbors = rp_neigh.kneighbors(X_test_rp)
+            true_distances,true_indices = true_neigh.kneighbors(X_test)
+            pred_distances,pred_indices = rp_neigh.kneighbors(X_test_rp)
             curr_recall = np.asarray([np.intersect1d(
                 true_neighbors[i], pred_neighbors[i]).size for i in range(X_test.shape[0])]) / k
             recall = recall+curr_recall.mean()
@@ -60,8 +60,8 @@ def test_dimension(iter_steps, smallX):
             rp_neigh = nn(n_neighbors=k)
             rp_neigh.fit(X_train_rp)
             # query and calculate recall rate
-            true_neighbors = true_neigh.kneighbors(X_test)
-            pred_neighbors = rp_neigh.kneighbors(X_test_rp)
+            true_distances,true_indices = true_neigh.kneighbors(X_test)
+            pred_distances,pred_indices = rp_neigh.kneighbors(X_test_rp)
             curr_recall = np.asarray([np.intersect1d(
                 true_neighbors[i], pred_neighbors[i]).size for i in range(X_test.shape[0])]) / k
             recall = recall+curr_recall.mean()
