@@ -94,6 +94,14 @@ class Merp(object):
         q = tl.tenalg.kronecker(qs)
         r = tl.tenalg.khatri_rao(rs)
         return q, r
+    
+    def row_khatri_rao(self,rs):
+    ts=[]
+    for i in range(len(rs)):
+        ts.append(numpy.transpose(rs[i]))
+    kr=tl.tenalg.khatri_rao(ts)
+    kr=np.transpose(kr)
+    return kr
 
     def transform(self, X):
         n, d = X.shape

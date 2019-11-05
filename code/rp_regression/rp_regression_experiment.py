@@ -75,6 +75,13 @@ def evaluation(beta_hat, beta_true):
     # MSE
     return sum(squaredError) / len(squaredError)
 
+def simple_row_KR(A,B):
+    assert A.shape[0]=B.shape[0]
+    C=np.array([[]])
+    for i in range(A.shape[0]):
+        C[i:]=tl.tenalg.kronecker(A[i:],B[i:])
+    return C
+
 
 def rp_regression_experiment(A_dim=(20, 30), order=2, k=[5, 10, 15, 20, 25], noise_level=0.1, iteration=100):
     A = design_matrix_gen(order, A_dim[0], A_dim[1])
@@ -94,6 +101,27 @@ def rp_regression_experiment(A_dim=(20, 30), order=2, k=[5, 10, 15, 20, 25], noi
             res[reduced_k][method]['relative_err'] = relative_err
             res[reduced_k][method]['residual'] = residual
     return res
+
+
+
+#testfunc below
+def new_rp_regression_test_simulation(A_dim=(20, 30), order=2, k=[5, 10, 15, 20, 25], noise_level=0.1, iteration=100):
+    A = design_matrix_gen(order, A_dim[0], A_dim[1])
+    dim = [A_dim[1] for _ in range(order)]
+    print(dim)
+    # generate beta, y
+    beta = beta_gen(np.prod(dim))
+    X = tl.tenalg.kronecker(A)
+    y = y_gen(X, beta, noise_level=noise_level)
+    rp=Merp([4, 4], 2, rand_type='g', target='col', tensor=True, fastQR=True)
+    rp.regenerate_omega()
+    q,r=rp.fastQR(np.matmul(rp._omegas,X))
+    qt=np.transpose(q)
+    beta_hat=np.linalg.lstsq(np.matmul(np.matmul(qt,q),x),np.matmul(rp._omegas,y))
+    #get the analysis for beta_hat and beta
+    
+
+
 
 
 if __name__ == '__main__':
