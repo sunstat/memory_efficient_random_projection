@@ -83,28 +83,34 @@ class Merp(object):
         '''
         assert self._fastQR and self._tensor
         assert len(X) == len(self._omegas)
-        # qr decompose of Xi\Omega_i
-        qs = []
-        rs = []
-        for i in range(len(X)):
-            q, r = np.linalg.qr(np.matmul(X[i], self._omegas[i]))
-            qs.append(q)
-            rs.append(r)
+        if self._target == 'col':
+            # qr decompose of Xi\Omega_i
+            qs = []
+            rs = []
+            for i in range(len(X)):
+                q, r = np.linalg.qr(np.matmul(X[i], self._omegas[i]))
+                qs.append(q)
+                rs.append(r)
 
-        q = tl.tenalg.kronecker(qs)
-        r = tl.tenalg.khatri_rao(rs)
+            q = tl.tenalg.kronecker(qs)
+            r = tl.tenalg.khatri_rao(rs)
+        else:
+            # qr decompose of \Omega_i X
+            qs = []
+            rs = []
+            for i in range(len(X)):
+                pass
+            q = None
+            r = None
+            # TODO
         return q, r
-    
-    def row_khatri_rao(self,rs):
-    ts=[]
-    for i in range(len(rs)):
-        ts.append(numpy.transpose(rs[i]))
-    kr=tl.tenalg.khatri_rao(ts)
-    kr=np.transpose(kr)
-    return kr
 
-    def transform(self, X):
+    def transform(self, X, right=True):
         n, d = X.shape
         _n = np.prod(self._n) if isinstance(n, list) else self._n
-        assert d == np.prod(_n)
-        return np.matmul(X, self._omega)
+        if right is True:
+            assert d == np.prod(_n)
+            return np.matmul(X, self._omega)
+        else:
+            assert n == np.prod(_n)
+            return np.matmul(self._omega, X)

@@ -4,7 +4,7 @@ from ..merp import Merp
 import numpy as np
 import tensorly as tl
 import pickle
-# import hdmedians as hd
+import hdmedians as hd
 from .plot import plot
 
 def orthogonal_matrix_gen(dim1, dim2):
@@ -14,15 +14,15 @@ def orthogonal_matrix_gen(dim1, dim2):
     return Q
 
 def average_mat(Xs, method='average'):
-    # if method == 'geomedian':
-    #     X = np.asarray([Xs[i].reshape(-1,) for i in range(len(Xs))])
+    if method == 'geomedian':
+        X = np.asarray([Xs[i].reshape(-1,) for i in range(len(Xs))])
         #print(X.shape)
-        # geomedian = np.array(hd.geomedian(X, axis=0))
-        # avg = geomedian.reshape(Xs[0].shape)
-    # elif method == 'average':
-    avg = np.sum(Xs, axis=0) / len(Xs)
-    # else:
-    #     raise NotImplementedError
+        geomedian = np.array(hd.geomedian(X, axis=0))
+        avg = geomedian.reshape(Xs[0].shape)
+    elif method == 'average':
+        avg = np.sum(Xs, axis=0) / len(Xs)
+    else:
+        raise NotImplementedError
     return avg
 
 def run_exp(tensor, k, mode=1, method='normal', iteration=100, var_reduction='geomedian'):
