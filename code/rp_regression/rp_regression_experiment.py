@@ -156,37 +156,4 @@ if __name__ == '__main__':
                                    iteration=iteration)
     print(res)
 
-'''
-if __name__ == '__main__':
-    MulA = np.array(design_matrix_gen(4, 2, 2, 'g'))
-    A1 = MulA[0]
-    A2 = MulA[1]
-    Akro = []
-    Akro.append(A1)
-    Akro.append(A2)
-    X = tl.tenalg.kronecker(Akro)
-    X = tl.unfold(X, mode=1)
-    beta_o = np.array([beta_gen(2, 'g'), beta_gen(2, 'g'),
-                       beta_gen(2, 'g'), beta_gen(2, 'g')])
-    y = np.matmul(X, beta_o)
-    print(X.shape)  # X:2*8*4
-    print(beta_o.shape)  # beta_o:4,2
-    print(y.shape)  # y:2*8*2
-    #[true_gamma, esti_gamma] = run_exp(X, y, [4, 4], 2)
-    #ori_gamma_MSE = evaluation(esti_gamma, true_gamma)
-    # rp = Merp([4, 4], 2, rand_type='g', target='col', tensor=True, fastQR=True)
-    # rp.regenerate_omega()
-    # print(len(rp._omegas))
-    # print(rp._omegas[0].shape)  # 4,2
-    # print(rp._omegas[1].shape)  # 4,2
-    # q, r = rp.fastQR(X)
-    # print(q.shape)
-    # print(r.shape)
-    # print(np.matmul(np.transpose(q),q))      #(4,2)
-    # print(y.shape)   #(2,2)
-    # for i in range(2):
-    #     y[i]=np.matmul(q,y[i])  #not transpose
-    # y=np.matmul(np.transpose(q),y)
-    # gamma, _, _, _ = np.linalg.lstsq(r, y)
-    # get the estimate and evaluate it?
-'''
+

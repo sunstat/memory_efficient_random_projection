@@ -4,6 +4,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.neighbors import NearestNeighbors as nn
 import logging
 from ..merp import Merp
+import os
+import pickle
 from .simulation import normalization, simulate
 import matplotlib.pyplot as plt
 import tensorly as tl
@@ -16,8 +18,8 @@ def test_dimension(iter_steps, smallX,targetNeighbors):
     recallFU = []
     recallTL = []
     recallFL = []
-    for k in range(200,205, 5):
-        rpb = Merp([64, 256], k, rand_type='g', target='col', tensor=False)
+    for k in range(1200,1205, 5):
+        rpb = Merp([128, 128], k, rand_type='g', target='col', tensor=False)
         X_train, X_test = train_test_split(
             smallX, test_size=0.05, train_size=0.95, random_state=23)
         true_neigh = nn(n_neighbors=targetNeighbors)
@@ -43,8 +45,8 @@ def test_dimension(iter_steps, smallX,targetNeighbors):
         recallFU.append(np.percentile(recalllist, 97.5))
         recallFL.append(np.percentile(recalllist, 2.5))
 
-    for k in range(200, 205, 5):
-        rpb = Merp([64, 256], k, rand_type='g', target='col', tensor=True)
+    for k in range(1200, 1205, 5):
+        rpb = Merp([128, 128], k, rand_type='g', target='col', tensor=True)
         X_train, X_test = train_test_split(
             smallX, test_size=0.05, train_size=0.95, random_state=23)
         true_neigh = nn(n_neighbors=targetNeighbors)
@@ -79,17 +81,29 @@ if __name__ == '__main__':
     mat = scipy.io.loadmat('./data/Flickr_16384.mat')
     X = mat['X']
     print(X.shape)
-    X = X[1:3000, :]
+    ku=100
+    X = X[1:ku, :]
     smallX = tl.unfold(X, mode=0)
     smallX = normalization(smallX)
     print(smallX.shape)
-    iter_steps = 30
+    iter_steps = 10
+    neighborNum=50
 
     [recallF, recallFU, recallFL, recallT, recallTU,
-        recallTL] = test_dimension(iter_steps, smallX,80)
+        recallTL] = test_dimension(iter_steps, smallX,neighborNum)
+    dataSave=[recallF, recallFU, recallFL, recallT, recallTU,recallTL]
+    dataSave.append(0)
+    dataSave.append(iter_steps)
+    dataSave.append(ku)
+    dataSave.append(neighborNum)
+    dir_name, _ = os.path.split(os.path.abspath(__file__))
+    pickle_base = os.path.join(dir_name, 'results')
+    pickle.dump(dataSave, open(os.path.join(pickle_base, 'nearneigh_{}.pickle'.format(neighborNum)), 'wb'))
+    print(dir_name)
+    print(pickle_base)
 
 
-x = [100]
+x = [1200]
 y = recallF
 z = recallT
 yu = recallFU
