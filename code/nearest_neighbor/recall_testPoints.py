@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import tensorly as tl
 
 
-def test_dimension(iter_steps, smallX):
+def test_dimension(iter_steps, smallX,dimension):
     recallT = []
     recallF = []
     recallTU = []
@@ -18,7 +18,7 @@ def test_dimension(iter_steps, smallX):
     recallFL = []
 
     for k in range(10, 30, 2):
-        rpb = Merp([64, 256], 20, rand_type='g', target='col', tensor=False)
+        rpb = Merp([64, 256], dimension, rand_type='g', target='col', tensor=False)
         X_train, X_test = train_test_split(
             smallX, test_size=0.05, train_size=0.95, random_state=23)
         true_neigh = nn(n_neighbors=k)
@@ -45,7 +45,7 @@ def test_dimension(iter_steps, smallX):
     print(recallF)
 
     for k in range(10, 30, 2):
-        rpb = Merp([64, 256], 20, rand_type='g', target='col', tensor=True)
+        rpb = Merp([64, 256], dimension, rand_type='g', target='col', tensor=True)
         X_train, X_test = train_test_split(
             smallX, test_size=0.05, train_size=0.95, random_state=23)
         true_neigh = nn(n_neighbors=k)
@@ -78,15 +78,30 @@ if __name__ == '__main__':
     print('hello')
     mat = scipy.io.loadmat('./data/Flickr_16384.mat')
     iter_steps = 100
+    ku=100
     # print(mat.keys())
     X = mat['X']
     print(X.shape)
-    X = X[1:41, :]
+    X = X[1:ku, :]
     smallX = tl.unfold(X, mode=0)
     smallX = normalization(smallX)
+    dimension=20
     print(smallX.shape)
     [recallF, recallFU, recallFL, recallT, recallTU,
-        recallTL] = test_dimension(iter_steps, smallX)
+        recallTL] = test_dimension(iter_steps, smallX,dimension)
+    dataSave=[recallF, recallFU, recallFL, recallT, recallTU,recallTL]
+    dataSave.append(0)
+    dataSave.append(iter_steps)
+    dataSave.append(ku)
+    dataSave.append(dimension)
+    dir_name, _ = os.path.split(os.path.abspath(__file__))
+    pickle_base = os.path.join(dir_name, 'results')
+    pickle.dump(dataSave, open(os.path.join(pickle_base, 'nearneighPoints_{}.pickle'.format(neighborNum)), 'wb'))
+    print(dir_name)
+    print(pickle_base)
+
+
+
 
 
 x = range(10, 30, 2)
