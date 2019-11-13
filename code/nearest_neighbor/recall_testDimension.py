@@ -18,7 +18,7 @@ def test_dimension(iter_steps, smallX,targetNeighbors):
     recallFU = []
     recallTL = []
     recallFL = []
-    for k in range(1200,1205, 5):
+    for k in range(800,825, 5):
         rpb = Merp([128, 128], k, rand_type='g', target='col', tensor=False)
         X_train, X_test = train_test_split(
             smallX, test_size=0.05, train_size=0.95, random_state=23)
@@ -45,7 +45,7 @@ def test_dimension(iter_steps, smallX,targetNeighbors):
         recallFU.append(np.percentile(recalllist, 97.5))
         recallFL.append(np.percentile(recalllist, 2.5))
 
-    for k in range(1200, 1205, 5):
+    for k in range(800, 825, 5):
         rpb = Merp([128, 128], k, rand_type='g', target='col', tensor=True)
         X_train, X_test = train_test_split(
             smallX, test_size=0.05, train_size=0.95, random_state=23)
@@ -81,12 +81,12 @@ if __name__ == '__main__':
     mat = scipy.io.loadmat('./data/Flickr_16384.mat')
     X = mat['X']
     print(X.shape)
-    ku=100
+    ku=3000
     X = X[1:ku, :]
     smallX = tl.unfold(X, mode=0)
     smallX = normalization(smallX)
     print(smallX.shape)
-    iter_steps = 10
+    iter_steps = 100
     neighborNum=50
 
     [recallF, recallFU, recallFL, recallT, recallTU,
@@ -98,12 +98,12 @@ if __name__ == '__main__':
     dataSave.append(neighborNum)
     dir_name, _ = os.path.split(os.path.abspath(__file__))
     pickle_base = os.path.join(dir_name, 'results')
-    pickle.dump(dataSave, open(os.path.join(pickle_base, 'nearneigh_{}.pickle'.format(neighborNum)), 'wb'))
+    pickle.dump(dataSave, open(os.path.join(pickle_base, 'nearneighDimensions_Flickr_1-3000_{}.pickle'.format(neighborNum)), 'wb'))
     print(dir_name)
     print(pickle_base)
 
 
-x = [1200]
+x = [800,805,810,815,820]
 y = recallF
 z = recallT
 yu = recallFU
